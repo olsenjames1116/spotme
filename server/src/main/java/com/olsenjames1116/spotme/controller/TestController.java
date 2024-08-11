@@ -12,5 +12,4 @@ public class TestController {
     public String getTest() {
         return "this is a test";
     }
-
 }
