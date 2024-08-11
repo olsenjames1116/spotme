@@ -10,16 +10,18 @@ DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `role`;
 
 CREATE TABLE `user` (
-    id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(50) NOT NULL,
     password VARCHAR(68) NOT NULL,
     enabled TINYINT NOT NULL,
-    balance NUMERIC(6,2)
+    balance NUMERIC(6,2),
+
+    PRIMARY KEY (`username`)
 );
 
 CREATE TABLE `role` (
-    user_id INT NOT NULL,
+    username VARCHAR(50) NOT NULL,
     role VARCHAR(50) NOT NULL,
-    UNIQUE KEY `role_idx_1` (`user_id`, `role`),
-    CONSTRAINT `role_fk_1` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) 
+    UNIQUE KEY `role_idx_1` (`username`, `role`),
+    CONSTRAINT `role_fk_1` FOREIGN KEY (`username`) REFERENCES `user`(`username`) 
 );
+
