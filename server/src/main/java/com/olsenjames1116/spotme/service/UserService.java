@@ -5,4 +5,6 @@ import com.olsenjames1116.spotme.entity.User;
 
 public interface UserService {
     List<User> findAll();
+
+    void save(User user);
 }
