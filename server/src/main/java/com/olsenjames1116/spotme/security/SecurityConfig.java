@@ -28,8 +28,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(
-                        configurer -> configurer.requestMatchers("/api/test").hasRole("USER"))
+                .authorizeHttpRequests(configurer -> configurer.requestMatchers("/api/test")
+                        .hasRole("USER").requestMatchers("/users").permitAll())
                 .httpBasic(withDefaults());
 
         return http.build();
