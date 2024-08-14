@@ -2,7 +2,6 @@ package com.olsenjames1116.spotme.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +16,8 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtUtil {
 
-    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor("your-random-secure-secret-which-is-at-least-32-bytes-long".getBytes());
+    private static final SecretKey SECRET_KEY = Keys
+            .hmacShaKeyFor("your-random-secure-secret-which-is-at-least-32-bytes-long".getBytes());
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -49,7 +49,7 @@ public class JwtUtil {
         return Jwts.builder().claims(claims).subject(subject)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-                .signWith(SECRET_KEY, SignatureAlgorithm.HS256).compact();
+                .signWith(SECRET_KEY).compact();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
