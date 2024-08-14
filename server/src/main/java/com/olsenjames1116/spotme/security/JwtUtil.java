@@ -11,12 +11,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import javax.crypto.SecretKey;
+import io.jsonwebtoken.security.Keys;
 
 
 @Service
 public class JwtUtil {
 
-    private SecretKey SECRET_KEY = ;
+    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor("your-random-secure-secret-which-is-at-least-32-bytes-long".getBytes());
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
