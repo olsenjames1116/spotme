@@ -2,8 +2,7 @@ package com.olsenjames1116.spotme.controller;
 
 import com.olsenjames1116.spotme.model.AuthenticationRequest;
 import com.olsenjames1116.spotme.entity.User;
-import com.olsenjames1116.spotme.dao.UserRepository;
-import com.olsenjames1116.spotme.service.CustomUserDetailsService;
+import com.olsenjames1116.spotme.service.UserService;
 import com.olsenjames1116.spotme.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,17 +12,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private CustomUserDetailsService userDetailsService;
-
-    @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -33,30 +29,37 @@ public class AuthController {
 
     @PostMapping("/register")
     public String registerUser(@RequestBody User user) {
-        // Encode the user's password
+        // Set initial values for the user
+        user.setId(0);
+        user.setBalance(1000.00);
+        user.setEnabled(1);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         // Save the user to the database
-        userRepository.save(user);
+        userService.save(user);
+
+        // Return success message
         return "User registered successfully";
     }
 
     @PostMapping("/login")
     public String loginUser(@RequestBody AuthenticationRequest authenticationRequest)
             throws Exception {
+        // Authenticate the user
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getUsername(), authenticationRequest.getPassword()));
 
+        // Print authentication request for debugging
         System.out.println("authentication request" + authenticationRequest);
 
+        // Retrieve user details
         final UserDetails userDetails =
-                userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+                userService.loadUserByUsername(authenticationRequest.getUsername());
+
+        // Generate JWT token
         final String jwt = jwtUtil.generateToken(userDetails);
 
+        // Return the JWT token
         return jwt;
-    }
-
-    @GetMapping("/hello")
-    public String hello() {
-        return "Hello, World!";
     }
 }
