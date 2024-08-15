@@ -124,7 +124,7 @@ function LogInForm() {
 	// Log in the user by passing form data to the API.
 	const logIn = async () => {
 		try {
-			const response = await api.post('/auth/log-in', { username, password });
+			const response = await api.post('/auth/login', { username, password });
 
 			sessionStorage.setItem('access_token', response.data.access_token);
 			navigate('/');
@@ -180,6 +180,7 @@ function LogInForm() {
 			ref={formRef}
 		>
 			<AuthenticationInput
+				type="text"
 				inputName="username"
 				testid="username"
 				label="Username"
@@ -188,6 +189,7 @@ function LogInForm() {
 				elementRef={usernameRef}
 			/>
 			<AuthenticationInput
+				type="password"
 				inputName="password"
 				testid="password"
 				label="Password"
