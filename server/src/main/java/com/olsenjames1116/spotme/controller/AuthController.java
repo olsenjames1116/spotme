@@ -2,14 +2,12 @@ package com.olsenjames1116.spotme.controller;
 
 import com.olsenjames1116.spotme.model.AuthenticationRequest;
 import com.olsenjames1116.spotme.model.AuthenticationResponse;
-import com.olsenjames1116.spotme.entity.User;
 import com.olsenjames1116.spotme.service.UserService;
 import com.olsenjames1116.spotme.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,21 +21,16 @@ public class AuthController {
     private UserService userService;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private JwtUtil jwtUtil;
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody User user) {
-        // Set initial values for the user
-        user.setId(0);
-        user.setBalance(1000.00);
-        user.setEnabled(1);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public String registerUser(@RequestParam("username") String username,
+            @RequestParam("password") String password,
+            @RequestParam("confirmPassword") String confirmPassword) {
+        System.out.println(username + ", " + password + ", " + confirmPassword);
 
         // Save the user to the database
-        userService.save(user);
+        userService.save(username, password, confirmPassword);
 
         // Return success message
         return "User registered successfully";

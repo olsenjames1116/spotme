@@ -180,7 +180,7 @@ function SignUpForm() {
 		const formData = createFormData();
 
 		try {
-			await api.post('/users', formData);
+			await api.post('/auth/register', formData);
 
 			// Alert the user they will be redirected and redirect them.
 			alert('Account created. You will be redirected to log in.');
