@@ -126,7 +126,7 @@ function LogInForm() {
 		try {
 			const response = await api.post('/auth/login', { username, password });
 
-			sessionStorage.setItem('access_token', response.data.access_token);
+			sessionStorage.setItem('access_token', response.data.accessToken);
 			navigate('/');
 		} catch (error) {
 			if (error instanceof AxiosError) {

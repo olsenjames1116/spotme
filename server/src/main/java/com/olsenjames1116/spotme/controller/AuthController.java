@@ -1,6 +1,7 @@
 package com.olsenjames1116.spotme.controller;
 
 import com.olsenjames1116.spotme.model.AuthenticationRequest;
+import com.olsenjames1116.spotme.model.AuthenticationResponse;
 import com.olsenjames1116.spotme.entity.User;
 import com.olsenjames1116.spotme.service.UserService;
 import com.olsenjames1116.spotme.security.JwtUtil;
@@ -43,8 +44,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String loginUser(@RequestBody AuthenticationRequest authenticationRequest)
-            throws Exception {
+    public AuthenticationResponse loginUser(
+            @RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         // Authenticate the user
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getUsername(), authenticationRequest.getPassword()));
@@ -59,7 +60,11 @@ public class AuthController {
         // Generate JWT token
         final String jwt = jwtUtil.generateToken(userDetails);
 
+        AuthenticationResponse response = new AuthenticationResponse(jwt);
+        response.setStatus(200);
+        response.setMessage("Login successful");
+
         // Return the JWT token
-        return jwt;
+        return response;
     }
 }
