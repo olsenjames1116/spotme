@@ -1,8 +1,10 @@
 package com.olsenjames1116.spotme.model;
 
+import org.springframework.http.HttpStatus;
+
 public class Response {
     private String message;
-    private int status;
+    private HttpStatus status;
 
     public Response() {}
 
@@ -14,11 +16,11 @@ public class Response {
         this.message = message;
     }
 
-    public int getStatus() {
+    public HttpStatus getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(HttpStatus status) {
         this.status = status;
     }
 }
