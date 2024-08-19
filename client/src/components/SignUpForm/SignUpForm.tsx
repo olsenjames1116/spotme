@@ -145,12 +145,14 @@ function SignUpForm() {
 
 	// Display meaningful errors to the user from server-side validation.
 	const displayInputServerErrors = (data: { message: string[] | string }) => {
-		let messages;
+		let messages = [''];
 
-		if (typeof data.message === 'string') {
-			messages = [data.message];
-		} else {
-			messages = data.message;
+		if (typeof data === 'string') {
+			messages = [data];
+		}
+
+		if (Array.isArray(data)) {
+			messages = data;
 		}
 
 		const usernamePattern = /username|user/i;

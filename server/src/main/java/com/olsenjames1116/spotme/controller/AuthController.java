@@ -4,7 +4,10 @@ import com.olsenjames1116.spotme.model.AuthenticationRequest;
 import com.olsenjames1116.spotme.model.AuthenticationResponse;
 import com.olsenjames1116.spotme.service.UserService;
 import com.olsenjames1116.spotme.security.JwtUtil;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,16 +27,24 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @PostMapping("/register")
-    public String registerUser(@RequestParam("username") String username,
+    public ResponseEntity<ArrayList<String>> registerUser(@RequestParam("username") String username,
             @RequestParam("password") String password,
             @RequestParam("confirmPassword") String confirmPassword) {
         System.out.println(username + ", " + password + ", " + confirmPassword);
 
         // Save the user to the database
-        userService.save(username, password, confirmPassword);
+        try {
+            userService.save(username, password, confirmPassword);
+            ArrayList<String> successArray = new ArrayList<String>();
+            successArray.add("User registered successfully");
 
-        // Return success message
-        return "User registered successfully";
+            return new ResponseEntity<ArrayList<String>>(successArray, HttpStatus.OK);
+        } catch (Exception e) {
+            ArrayList<String> errorArray = new ArrayList<String>();
+            errorArray.add(e.getMessage());
+
+            return new ResponseEntity<ArrayList<String>>(errorArray, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/login")
@@ -54,7 +65,7 @@ public class AuthController {
         final String jwt = jwtUtil.generateToken(userDetails);
 
         AuthenticationResponse response = new AuthenticationResponse(jwt);
-        response.setStatus(200);
+        response.setStatus(HttpStatus.OK);
         response.setMessage("Login successful");
 
         // Return the JWT token
