@@ -48,7 +48,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public AuthenticationResponse loginUser(
+    public ResponseEntity<ArrayList<String>> loginUser(
             @RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         // Authenticate the user
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -57,18 +57,23 @@ public class AuthController {
         // Print authentication request for debugging
         System.out.println("authentication request" + authenticationRequest);
 
-        // Retrieve user details
-        final UserDetails userDetails =
-                userService.loadUserByUsername(authenticationRequest.getUsername());
+        try { // Retrieve user details
+            final UserDetails userDetails =
+                    userService.loadUserByUsername(authenticationRequest.getUsername());
 
-        // Generate JWT token
-        final String jwt = jwtUtil.generateToken(userDetails);
+            // Generate JWT token
+            final String jwt = jwtUtil.generateToken(userDetails);
 
-        AuthenticationResponse response = new AuthenticationResponse(jwt);
-        response.setStatus(HttpStatus.OK);
-        response.setMessage("Login successful");
+            ArrayList<String> successArray = new ArrayList<String>();
+            successArray.add(jwt);
 
-        // Return the JWT token
-        return response;
+            // Return the JWT token
+            return new ResponseEntity<ArrayList<String>>(successArray, HttpStatus.OK);
+        } catch (Exception e) {
+            ArrayList<String> errorArray = new ArrayList<String>();
+            errorArray.add(e.getMessage());
+
+            return new ResponseEntity<ArrayList<String>>(errorArray, HttpStatus.BAD_REQUEST);
+        }
     }
 }
