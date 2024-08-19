@@ -96,29 +96,11 @@ function LogInForm() {
 	};
 
 	// Display meaningful errors to the user from server-side validation.
-	const displayInputServerErrors = (data: { message: string[] | string }) => {
-		let messages;
+	const displayInputServerErrors = () => {
+		usernameRef.current?.setCustomValidity('invalid');
+		passwordRef.current?.setCustomValidity('invalid');
 
-		if (typeof data.message === 'string') {
-			messages = [data.message];
-		} else {
-			messages = data.message;
-		}
-
-		const usernamePattern = /username|user/i;
-		const passwordPattern = /^Password/;
-
-		messages.map((message: string) => {
-			if (usernamePattern.test(message)) {
-				dispatch(storeInvalidUsernameFeedback(message));
-				usernameRef.current?.setCustomValidity('invalid');
-			}
-
-			if (passwordPattern.test(message)) {
-				dispatch(storeInvalidPasswordFeedback(message));
-				passwordRef.current?.setCustomValidity('invalid');
-			}
-		});
+		dispatch(storeInvalidPasswordFeedback('Invalid username or password.'));
 	};
 
 	// Log in the user by passing form data to the API.
@@ -126,13 +108,12 @@ function LogInForm() {
 		try {
 			const response = await api.post('/auth/login', { username, password });
 
-			sessionStorage.setItem('access_token', response.data.accessToken);
+			sessionStorage.setItem('access_token', response.data[0]);
 			navigate('/');
 		} catch (error) {
 			if (error instanceof AxiosError) {
-				if (error.response?.status === 400 || error.response?.status === 401) {
-					const { data } = error.response;
-					displayInputServerErrors(data);
+				if (error.response?.status === 403) {
+					displayInputServerErrors();
 				}
 			}
 
