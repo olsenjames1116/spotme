@@ -6,23 +6,16 @@ a demo account. */
 function DemoAccountLogIn() {
 	const navigate = useNavigate();
 
-	// Create a form data object with the user's input.
-	const createFormData: () => FormData = () => {
-		const formData = new FormData();
-		formData.append('username', 'demo');
-		formData.append('password', 'password123');
-
-		return formData;
-	};
-
 	// Logs the user into the demo account.
-	const logInDemoAccount = (event: React.FormEvent<HTMLFormElement>) => {
+	const logInDemoAccount = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		const formData = createFormData();
-
 		try {
-			api.post('/log-in', formData);
+			const response = await api.post('/auth/login', {
+				username: 'demo',
+				password: 'password123',
+			});
 
+			sessionStorage.setItem('access_token', response.data[0]);
 			navigate('/');
 		} catch (error) {
 			console.log(error);
